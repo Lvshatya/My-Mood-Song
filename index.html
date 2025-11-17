@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Mood Song</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>🎵 My Mood Song</h1>
+
+  <!-- Pilih Mood -->
+  <div class="emot-container">
+    <button onclick="changeMood('senang')">😆 Senang</button>
+    <button onclick="changeMood('sedih')">😢 Sedih</button>
+    <button onclick="changeMood('marah')">😤 Marah</button>
+    <button onclick="changeMood('santai')">😉 Santai</button>
+    <button onclick="changeMood('galau')">💔 Galau</button>
+    <button onclick="changeMood('jatuhCinta')">❤ Jatuh Cinta</button>
+  </div>
+
+  <!-- Audio Player -->
+  <audio id="player" controls></audio>
+
+  <!-- Kontrol Player -->
+  <div style="margin-top:20px;">
+    <button onclick="prevSong()">⏮ Prev</button>
+    <button onclick="nextSong()">Next ⏭</button>
+    <button onclick="shuffleSong()">🔀 Shuffle</button>
+  </div>
+
+  <script>
+    let playlist = {};
+    let currentList = [];
+    let currentIndex = 0;
+    const player = document.getElementById('player');
+
+    // Load semua playlist dari file JSON
+    fetch('playlist.json')
+      .then(res => res.json())
+      .then(data => playlist = data);
+
+    function changeMood(mood) {
+      if (!playlist[mood]) return;
+      currentList = playlist[mood];
+      currentIndex = 0;
+      playSong(currentIndex);
+    }
+
+    function playSong(index) {
+      if (currentList.length === 0) return;
+      if (index < 0) index = currentList.length - 1;
+      if (index >= currentList.length) index = 0;
+      currentIndex = index;
+      player.src = currentList[currentIndex];
+      player.play().catch(e => console.log("User harus klik untuk play: ", e));
+    }
+
+    function nextSong() {
+      playSong(currentIndex + 1);
+    }
+
+    function prevSong() {
+      playSong(currentIndex - 1);
+    }
+
+    function shuffleSong() {
+      const randIndex = Math.floor(Math.random() * currentList.length);
+      playSong(randIndex);
+    }
+  </script>
+
+</body>
+</html>
